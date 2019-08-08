@@ -9,7 +9,7 @@
 #ifndef __FILTERS_H__
 #define __FILTERS_H__
 
-#include "gfxtypes.h"
+#include "../gfxlib/gfxtypes.h"
 
 extern void filter_tv2x      (u8 *, u32, u8 *, u8 *, u32, int, int);
 extern void filter_normal2x  (u8 *, u32, u8 *, u8 *, u32, int, int);

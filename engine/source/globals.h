@@ -65,11 +65,18 @@
 #define strnicmp strncasecmp
 #endif
 
+#ifdef PS4
+#include <stdarg.h>
+#include "ps4port.h"
+#define stricmp strcasecmp
+#define strnicmp strncasecmp
+#endif
+
 #include "packfile.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef PP_TEST
+#if !defined(PP_TEST) && !defined(PS4)
 #define printf writeToLogFile
 
 // redefine assert to write to the log file and exit nicely instead of aborting

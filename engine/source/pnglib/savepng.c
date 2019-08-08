@@ -7,7 +7,9 @@
  */
 
 #include <png.h>
+#ifndef PS4
 #include <malloc.h>
+#endif
 #include "globals.h"
 #include "screen.h"
 

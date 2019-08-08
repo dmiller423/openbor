@@ -37,7 +37,10 @@
 #include <stdlib.h>
 #endif
 
+#ifndef PS4
 #include <malloc.h>
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include "globals.h"
@@ -115,6 +118,8 @@ u64 getFreeRam(int byte_size)
     return (atoi(result) * 1024) / byte_size;
 #elif SYMBIAN
     return GetFreeAmount();
+#elif defined(PS4)
+	return 512 * 1024 * 1024;	// *FIXME* ... unless they are checking this value changed it's probably fine 
 #else
     struct mallinfo mi = mallinfo();
 #ifdef _INCLUDE_MALLOC_H_
@@ -155,6 +160,9 @@ void setSystemRam()
     {
         systemRam += 32 * 1024 * 1024;
     }
+#elif defined(PS4)
+	systemRam = 512 * 1024 * 1024;	// *FIXME* ffs...
+	elfOffset = 0x00000000;
 #elif (GP2X && !WIZ)
     // 32 MBytes - Memory Map:
     systemRam = 0x02000000 - 0x00000000;

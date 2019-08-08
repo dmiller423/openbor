@@ -10,7 +10,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#ifndef PS4
 #include <malloc.h>
+#endif
 #include <locale.h>
 #include <math.h>
 
@@ -20,7 +22,7 @@
 #include "openbor.h"
 #include "packfile.h"
 
-#if !DC && !VITA
+#if !DC && !VITA && !defined(PS4)
 #include <dirent.h>
 #endif
 
@@ -84,6 +86,13 @@ typedef void DIR;
 #define READ_LOGFILE(type)   type ? fopen("ux0:/data/OpenBOR/Logs/OpenBorLog.txt", "rt") : fopen("ux0:/data/OpenBOR/Logs/ScriptLog.txt", "rt")
 #define COPY_ROOT_PATH(buf, name) strcpy(buf, "ux0:/data/OpenBOR/"); strcat(buf, name); strcat(buf, "/");
 #define COPY_PAKS_PATH(buf, name) strcpy(buf, "ux0:/data/OpenBOR/Paks/"); strcat(buf, name);
+#elif PS4
+#define CHECK_LOGFILE(type)  type ? fileExists("/app0/data/OpenBOR/Logs/OpenBorLog.txt") : fileExists("./Logs/ScriptLog.txt")
+#define OPEN_LOGFILE(type)   type ? fopen("/app0/data/OpenBOR/Logs/OpenBorLog.txt", "wt") : fopen("/app0/data/OpenBOR/Logs/ScriptLog.txt", "wt")
+#define APPEND_LOGFILE(type) type ? fopen("/app0/data/OpenBOR/Logs/OpenBorLog.txt", "at") : fopen("/app0/data/OpenBOR/Logs/ScriptLog.txt", "at")
+#define READ_LOGFILE(type)   type ? fopen("/app0/data/OpenBOR/Logs/OpenBorLog.txt", "rt") : fopen("/app0/data/OpenBOR/Logs/ScriptLog.txt", "rt")
+#define COPY_ROOT_PATH(buf, name) strcpy(buf, "/app0/data/OpenBOR/"); strcat(buf, name); strcat(buf, "/");
+#define COPY_PAKS_PATH(buf, name) strcpy(buf, "/app0/data/OpenBOR/Paks/"); strcat(buf, name);
 #elif ANDROID
 //msmalik681 now using AndroidRoot fuction from sdlport.c to update all android paths.
 #define Alog AndroidRoot("Logs/OpenBorLog.txt")
@@ -173,7 +182,7 @@ void getBasePath(char *newName, char *name, int type)
 
 
 
-#ifndef DC
+#if !defined(DC) && !defined(PS4)
 int dirExists(char *dname, int create)
 {
     char realName[MAX_LABEL_LEN] = {""};
@@ -247,7 +256,7 @@ void writeToLogFile(const char *msg, ...)
 {
     va_list arglist;
 
-#ifdef DC
+#if defined(DC) || defined(PS4)
     va_start(arglist, msg);
     vfprintf(stdout, msg, arglist);
     va_end(arglist);
@@ -303,7 +312,7 @@ void *checkAlloc(void *ptr, size_t size, const char *func, const char *file, int
                        "\n*            Shutting Down            *\n\n");
         writeToLogFile("Out of memory!\n");
         writeToLogFile("Allocation of size %i failed in function '%s' at %s:%i.\n", size, func, file, line);
-#ifndef WIN
+#if !defined(WIN) && !defined(PS4)
         writeToLogFile("Memory usage at exit: %u\n", mallinfo().arena);
 #endif
         borExit(2);

@@ -19,7 +19,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
+
+#ifndef PS4
 #include <malloc.h>
+#endif
+
 #include <errno.h>
 #include "List.h"
 #include "pp_parser.h"
